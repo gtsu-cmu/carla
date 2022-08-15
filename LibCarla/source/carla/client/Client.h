@@ -25,9 +25,7 @@ namespace client {
     /// @param port TCP port to connect with the simulator.
     /// @param worker_threads number of asynchronous threads to use, or 0 to use
     ///        all available hardware concurrency.
-    Client(){} //Added to fix CADRE linking issue for NULL constructor
-    
-    Client(
+    explicit Client(
         const std::string &host,
         uint16_t port,
         size_t worker_threads = 0u);
@@ -54,6 +52,18 @@ namespace client {
 
     std::vector<std::string> GetAvailableMaps() const {
       return _simulator->GetAvailableMaps();
+    }
+
+    bool SetFilesBaseFolder(const std::string &path) {
+      return _simulator->SetFilesBaseFolder(path);
+    }
+
+    std::vector<std::string> GetRequiredFiles(const std::string &folder = "", const bool download = true) const {
+      return _simulator->GetRequiredFiles(folder, download);
+    }
+
+    void RequestFile(const std::string &name) const {
+      _simulator->RequestFile(name);
     }
 
     World ReloadWorld(bool reset_settings = true) const {
@@ -110,8 +120,9 @@ namespace client {
       return _simulator->ShowRecorderActorsBlocked(name, min_time, min_distance);
     }
 
-    std::string ReplayFile(std::string name, double start, double duration, uint32_t follow_id) {
-      return _simulator->ReplayFile(name, start, duration, follow_id);
+    std::string ReplayFile(std::string name, double start, double duration,
+        uint32_t follow_id, bool replay_sensors) {
+      return _simulator->ReplayFile(name, start, duration, follow_id, replay_sensors);
     }
 
     void StopReplayer(bool keep_actors) {
@@ -135,13 +146,16 @@ namespace client {
     std::vector<rpc::CommandResponse> ApplyBatchSync(
         std::vector<rpc::Command> commands,
         bool do_tick_cue = false) const {
-      return _simulator->ApplyBatchSync(std::move(commands), do_tick_cue);
+      auto responses = _simulator->ApplyBatchSync(std::move(commands), false);
+      if (do_tick_cue)
+        _simulator->Tick(_simulator->GetNetworkingTimeout());
+
+      return responses;
     }
 
   private:
 
     std::shared_ptr<detail::Simulator> _simulator;
-
   };
 
   inline Client::Client(

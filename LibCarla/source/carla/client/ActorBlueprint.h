@@ -28,8 +28,7 @@ namespace client {
     // =========================================================================
     /// @{
 
-    ActorBlueprint();
-    ActorBlueprint(rpc::ActorDefinition actor_definition);
+    explicit ActorBlueprint(rpc::ActorDefinition actor_definition);
 
     /// @}
     // =========================================================================

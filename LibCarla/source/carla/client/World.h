@@ -10,6 +10,8 @@
 #include "carla/Time.h"
 #include "carla/client/DebugHelper.h"
 #include "carla/client/Landmark.h"
+#include "carla/client/Waypoint.h"
+#include "carla/client/Junction.h"
 #include "carla/client/LightManager.h"
 #include "carla/client/Timestamp.h"
 #include "carla/client/WorldSnapshot.h"
@@ -24,6 +26,8 @@
 #include "carla/rpc/VehiclePhysicsControl.h"
 #include "carla/rpc/WeatherParameters.h"
 #include "carla/rpc/VehicleLightStateList.h"
+#include "carla/rpc/Texture.h"
+#include "carla/rpc/MaterialParameter.h"
 
 #include <boost/optional.hpp>
 
@@ -41,9 +45,7 @@ namespace client {
   class World {
   public:
 
-    World(){}
-
-    World(detail::EpisodeProxy episode) : _episode(std::move(episode)) {}
+    explicit World(detail::EpisodeProxy episode) : _episode(std::move(episode)) {}
 
     ~World(){}
 
@@ -143,9 +145,14 @@ namespace client {
     /// percentage of 1.0f means all pedestrians can cross roads if needed
     void SetPedestriansCrossFactor(float percentage);
 
+    /// set the seed to use with random numbers in the pedestrians module
+    void SetPedestriansSeed(unsigned int seed);
+
     SharedPtr<Actor> GetTrafficSign(const Landmark& landmark) const;
 
     SharedPtr<Actor> GetTrafficLight(const Landmark& landmark) const;
+
+    SharedPtr<Actor> GetTrafficLightFromOpenDRIVE(const road::SignId& sign_id) const;
 
     void ResetAllTrafficLights();
 
@@ -178,6 +185,50 @@ namespace client {
 
     std::vector<rpc::LabelledPoint> CastRay(
         geom::Location start_location, geom::Location end_location) const;
+
+    std::vector<SharedPtr<Actor>> GetTrafficLightsFromWaypoint(
+        const Waypoint& waypoint, double distance) const;
+
+    std::vector<SharedPtr<Actor>> GetTrafficLightsInJunction(
+        const road::JuncId junc_id) const;
+
+    // std::vector<std::string> GetObjectNameList();
+
+    void ApplyColorTextureToObject(
+        const std::string &actor_name,
+        const rpc::MaterialParameter& parameter,
+        const rpc::TextureColor& Texture);
+
+    void ApplyColorTextureToObjects(
+        const std::vector<std::string> &objects_names,
+        const rpc::MaterialParameter& parameter,
+        const rpc::TextureColor& Texture);
+
+    void ApplyFloatColorTextureToObject(
+        const std::string &actor_name,
+        const rpc::MaterialParameter& parameter,
+        const rpc::TextureFloatColor& Texture);
+
+    void ApplyFloatColorTextureToObjects(
+        const std::vector<std::string> &objects_names,
+        const rpc::MaterialParameter& parameter,
+        const rpc::TextureFloatColor& Texture);
+
+    void ApplyTexturesToObject(
+        const std::string &actor_name,
+        const rpc::TextureColor& diffuse_texture,
+        const rpc::TextureFloatColor& emissive_texture,
+        const rpc::TextureFloatColor& normal_texture,
+        const rpc::TextureFloatColor& ao_roughness_metallic_emissive_texture);
+
+    void ApplyTexturesToObjects(
+        const std::vector<std::string> &objects_names,
+        const rpc::TextureColor& diffuse_texture,
+        const rpc::TextureFloatColor& emissive_texture,
+        const rpc::TextureFloatColor& normal_texture,
+        const rpc::TextureFloatColor& ao_roughness_metallic_emissive_texture);
+
+    std::vector<std::string> GetNamesOfAllObjects() const;
 
   private:
 
