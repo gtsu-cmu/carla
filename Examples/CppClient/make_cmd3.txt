@@ -1,0 +1,3 @@
+echo "\033[1;35mCompiling C++ Client Helper...\033[0m"
+mkdir -p /home/shounak/shounak/carla/Examples/CppClient/bin
+/usr/bin/g++-7 -std=c++14 -pthread -fPIC -O3 -DNDEBUG -Werror -Wall -Wextra -I/home/shounak/shounak/carla/Examples/CppClient/libcarla-install/include -isystem /home/shounak/shounak/carla/Examples/CppClient/libcarla-install/include/system -L/home/shounak/shounak/carla/Examples/CppClient/libcarla-install/lib -o /home/shounak/shounak/carla/Examples/CppClient/bin/cpp_client main_driver.cpp main.cpp -Wl,-Bstatic -lcarla_client -lrpc -lboost_filesystem -Wl,-Bdynamic -lpng -ltiff -ljpeg -lRecast -lDetour -lDetourCrowd

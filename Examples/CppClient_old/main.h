@@ -35,6 +35,8 @@
 #include <interfaces/VehicleState/Output/Abstract.h>
 #include <interfaces/DriveCommand/Input/Abstract.h>
 
+#undef snprintf
+#undef carla_client_cpp
 
 class carla_client_cpp{
 	public:

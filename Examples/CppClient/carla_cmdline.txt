@@ -1,0 +1,22 @@
+cd /home/shounak/shounak/carla/Examples/CppClient/../..; make setup
+mkdir -p /home/shounak/shounak/carla/Examples/CppClient/build
+echo "\033[1;35mCompiling LibCarla.client...\033[0m"
+{ \
+	cd /home/shounak/shounak/carla/Examples/CppClient/build; \
+	if [ ! -f "build.ninja" ]; then \
+	cmake \
+		-G "Ninja" \
+		-DCMAKE_BUILD_TYPE=Client \
+		-DLIBCARLA_BUILD_RELEASE=ON \
+		-DLIBCARLA_BUILD_DEBUG=OFF \
+		-DLIBCARLA_BUILD_TEST=OFF \
+		-DCMAKE_TOOLCHAIN_FILE=/home/shounak/shounak/carla/Examples/CppClient/ToolChain.cmake \
+		-DCMAKE_INSTALL_PREFIX=/home/shounak/shounak/carla/Examples/CppClient/libcarla-install \
+		-DCMAKE_EXPORT_COMPILE_COMMANDS=1 \
+		/home/shounak/shounak/carla/Examples/CppClient/../..; \
+  fi; \
+	ninja; \
+	ninja install | grep -v "Up-to-date:"; \
+}
+echo "\033[1;35mRunning C++ Client...\033[0m"
+/home/shounak/shounak/carla/Examples/CppClient/bin/cpp_client 

@@ -25,10 +25,11 @@ namespace client {
     /// @param port TCP port to connect with the simulator.
     /// @param worker_threads number of asynchronous threads to use, or 0 to use
     ///        all available hardware concurrency.
-    explicit Client(
+    Client(
         const std::string &host,
         uint16_t port,
         size_t worker_threads = 0u);
+    Client(){}
 
     /// Set a timeout for networking operations. If set, any networking
     /// operation taking longer than @a timeout throws rpc::timeout.

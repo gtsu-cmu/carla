@@ -36,23 +36,6 @@ $(BINDIR)/cpp_client: | build_libcarla
 		-Wl,-Bstatic -lcarla_client -lrpc -lboost_filesystem -Wl,-Bdynamic \
 		-lpng -ltiff -ljpeg -lRecast -lDetour -lDetourCrowd
 
-compile_main: #Added by Shounak
-	$(call log,Compiling C++ Client...)
-	@mkdir -p $(BINDIR)
-	@$(CXX) $(CXXFLAGS) -I$(INSTALLDIR)/include -isystem $(INSTALLDIR)/include/system -L$(INSTALLDIR)/lib \
-		-o $(BINDIR)/cpp_client main.cpp \
-		-Wl,-Bstatic -lcarla_client -lrpc -lboost_filesystem -Wl,-Bdynamic \
-		-lpng -ltiff -ljpeg -lRecast -lDetour -lDetourCrowd
-
-compile_main_driver: #Added by Shounak
-	$(call log,Compiling C++ Client Helper...)
-	@mkdir -p $(BINDIR)
-	@$(CXX) $(CXXFLAGS) -I/home/shounak/shounak/carla/Examples/CppClient/libcarla-install/include/carla/client/detail/ -I/home/shounak/shounak/cadre/tartanracing/src -I/home/shounak/shounak/cadre/tartanracing/src/common \
-	 -I$(INSTALLDIR)/include -isystem $(INSTALLDIR)/include/system -L$(INSTALLDIR)/lib \
-		 -o $(BINDIR)/cpp_client main_driver.cpp main.cpp\
-		-Wl,-Bstatic -lcarla_client -lrpc -lboost_filesystem -Wl,-Bdynamic \
-		-lpng -ltiff -ljpeg -lRecast -lDetour -lDetourCrowd -g 
-
 build_libcarla: $(TOOLCHAIN)
 	@cd $(CARLADIR); make setup
 	@mkdir -p $(BUILDDIR)

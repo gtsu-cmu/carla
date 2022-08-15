@@ -26,9 +26,46 @@ namespace opendrive {
 
   boost::optional<road::Map> OpenDriveParser::Load(const std::string &opendrive) {
     pugi::xml_document xml;
-    pugi::xml_parse_result parse_result = xml.load_string(opendrive.c_str());
+    //pugi::xml_parse_result parse_result = xml.load_string(opendrive.c_str());
+    pugi::xml_parse_result parse_result = xml.load_file(opendrive.c_str());
+    std::cout<<"IN OpenDriveParser1"<<'\n';
 
     if (parse_result == false) {
+      std::cout<<opendrive.c_str()<<'\n';
+      std::cout<<"XODR parsing failed"<<'\n';
+      log_error(opendrive.c_str());
+      log_error("unable to parse the OpenDRIVE XML string");
+      return {};
+    }
+
+    carla::road::MapBuilder map_builder;
+
+    parser::GeoReferenceParser::Parse(xml, map_builder);
+    parser::RoadParser::Parse(xml, map_builder);
+    parser::JunctionParser::Parse(xml, map_builder);
+    parser::GeometryParser::Parse(xml, map_builder);
+    parser::LaneParser::Parse(xml, map_builder);
+    parser::ProfilesParser::Parse(xml, map_builder);
+    parser::TrafficGroupParser::Parse(xml, map_builder);
+    parser::SignalParser::Parse(xml, map_builder);
+    parser::ObjectParser::Parse(xml, map_builder);
+    parser::ControllerParser::Parse(xml, map_builder);
+
+    return map_builder.Build();
+
+  }
+
+  boost::optional<road::Map> OpenDriveParser::cadreLoad(const std::string &opendrive) {
+    pugi::xml_document xml;
+
+    //pugi::xml_parse_result parse_result = xml.load_string(opendrive.c_str());
+    pugi::xml_parse_result parse_result = xml.load_file(opendrive.c_str());
+    std::cout<<"IN OpenDriveParser2"<<'\n';
+
+    if (parse_result == false) {
+      std::cout<<opendrive.c_str()<<'\n';
+      std::cout<<"XODR parsing failed"<<'\n';
+      log_error(opendrive.c_str());
       log_error("unable to parse the OpenDRIVE XML string");
       return {};
     }

@@ -55,6 +55,10 @@ namespace client {
     }
   }
 
+  void Vehicle::SetVelocity_SS(const geom::Vector3D &vector) {
+        GetEpisode().Lock()->SetActorTargetVelocity(*this, vector);
+  }
+
   void Vehicle::ApplyPhysicsControl(const PhysicsControl &physics_control) {
     GetEpisode().Lock()->ApplyPhysicsControlToVehicle(*this, physics_control);
   }

@@ -43,6 +43,8 @@ namespace client {
     /// Switch on/off this vehicle's autopilot.
     void SetAutopilot(bool enabled = true, uint16_t tm_port = TM_DEFAULT_PORT);
 
+    void SetVelocity_SS(const geom::Vector3D & vector);
+
     /// Switch on/off this vehicle's autopilot.
     void ShowDebugTelemetry(bool enabled = true);
 

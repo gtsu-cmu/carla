@@ -45,7 +45,8 @@ namespace client {
   class World {
   public:
 
-    explicit World(detail::EpisodeProxy episode) : _episode(std::move(episode)) {}
+    World(detail::EpisodeProxy episode) : _episode(std::move(episode)) {}
+    World(){}
 
     ~World(){}
 

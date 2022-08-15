@@ -19,6 +19,7 @@ namespace opendrive {
   public:
 
     static boost::optional<road::Map> Load(const std::string &opendrive);
+    static boost::optional<road::Map> cadreLoad(const std::string &opendrive);
   };
 
 } // namespace opendrive

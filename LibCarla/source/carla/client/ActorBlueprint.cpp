@@ -30,6 +30,11 @@ namespace client {
     FillMap(_attributes, definition.attributes);
   }
 
+  ActorBlueprint::ActorBlueprint(){
+    
+  }
+
+
   bool ActorBlueprint::MatchTags(const std::string &wildcard_pattern) const {
     return
         StringUtil::Match(_id, wildcard_pattern) ||

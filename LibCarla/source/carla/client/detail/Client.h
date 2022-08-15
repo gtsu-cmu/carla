@@ -67,7 +67,9 @@ namespace detail {
   class Client : private NonCopyable {
   public:
 
-    explicit Client(
+    Client(); //used as null constructor for CADRE compilation
+
+    Client(
         const std::string &host,
         uint16_t port,
         size_t worker_threads = 0u);

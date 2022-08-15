@@ -29,8 +29,6 @@
 #include <carla/rpc/OpendriveGenerationParameters.h>
 #include <carla/sensor/data/GnssMeasurement.h>
 
-#undef snprintf
-
 #define WHEELBASE 2.946
 #define MAXCURV 1.073 //(0.19)//(0.17696305) 
 
