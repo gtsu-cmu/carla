@@ -11,7 +11,6 @@
 #include "carla/opendrive/OpenDriveParser.h"
 #include "carla/road/Map.h"
 #include "carla/road/RoadTypes.h"
-#include "carla/trafficmanager/InMemoryMap.h"
 
 #include <sstream>
 
@@ -27,17 +26,15 @@ namespace client {
     return std::move(*map);
   }
 
-  Map::Map(rpc::MapInfo description, std::string xodr_content)
+  Map::Map(rpc::MapInfo description)
     : _description(std::move(description)),
-      _map(MakeMap(xodr_content)){
-    open_drive_file = xodr_content;
-  }
+      _map(MakeMap(_description.open_drive_file)) {}
+
   Map::Map(std::string name, std::string xodr_content)
     : Map(rpc::MapInfo{
     std::move(name),
-    std::vector<geom::Transform>{}}, xodr_content) {
-    open_drive_file = xodr_content;
-  }
+    std::move(xodr_content),
+    std::vector<geom::Transform>{}}) {}
 
   Map::~Map() = default;
 
@@ -182,10 +179,6 @@ namespace client {
       }
     }
     return result;
-  }
-
-  void Map::CookInMemoryMap(const std::string& path) const {
-    traffic_manager::InMemoryMap::Cook(shared_from_this(), path);
   }
 
 } // namespace client

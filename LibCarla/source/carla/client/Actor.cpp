@@ -88,21 +88,17 @@ namespace client {
     GetEpisode().Lock()->SetActorEnableGravity(*this, enabled);
   }
 
-  rpc::ActorState Actor::GetActorState() const {
-    return GetEpisode().Lock()->GetActorState(*this);
-  }
-
   bool Actor::Destroy() {
-    rpc::ActorState actor_state = GetActorState();
-    bool result = false;
-    if (actor_state != rpc::ActorState::Invalid) {
-      result = GetEpisode().Lock()->DestroyActor(*this);
+    if (IsAlive()) {
+      // Let the exceptions leave the function, IsAlive() will still be true.
+      _is_alive = !GetEpisode().Lock()->DestroyActor(*this);
     } else {
       log_warning(
           "attempting to destroy an actor that is already dead:",
           GetDisplayId());
+      _is_alive = false;
     }
-    return result;
+    return _is_alive;
   }
 
 } // namespace client

@@ -8,17 +8,15 @@
 
 #include "carla/Exception.h"
 #include "carla/Version.h"
-#include "carla/client/FileTransfer.h"
 #include "carla/client/TimeoutException.h"
 #include "carla/rpc/ActorDescription.h"
-#include "carla/rpc/BoneTransformDataIn.h"
+#include "carla/rpc/BoneTransformData.h"
 #include "carla/rpc/Client.h"
 #include "carla/rpc/DebugShape.h"
 #include "carla/rpc/Response.h"
 #include "carla/rpc/VehicleControl.h"
 #include "carla/rpc/VehicleLightState.h"
-#include "carla/rpc/WalkerBoneControlIn.h"
-#include "carla/rpc/WalkerBoneControlOut.h"
+#include "carla/rpc/WalkerBoneControl.h"
 #include "carla/rpc/WalkerControl.h"
 #include "carla/streaming/Client.h"
 
@@ -98,6 +96,8 @@ namespace detail {
   // -- Client -----------------------------------------------------------------
   // ===========================================================================
 
+  Client::Client(){}
+
   Client::Client(
       const std::string &host,
       const uint16_t port,
@@ -162,24 +162,6 @@ namespace detail {
     _pimpl->CallAndWait<void>("copy_opendrive_to_file", std::move(opendrive), params);
   }
 
-  void Client::ApplyColorTextureToObjects(
-      const std::vector<std::string> &objects_name,
-      const rpc::MaterialParameter& parameter,
-      const rpc::TextureColor& Texture) {
-    _pimpl->CallAndWait<void>("apply_color_texture_to_objects", objects_name, parameter, Texture);
-  }
-
-  void Client::ApplyColorTextureToObjects(
-      const std::vector<std::string> &objects_name,
-      const rpc::MaterialParameter& parameter,
-      const rpc::TextureFloatColor& Texture) {
-    _pimpl->CallAndWait<void>("apply_float_color_texture_to_objects", objects_name, parameter, Texture);
-  }
-
-  std::vector<std::string> Client::GetNamesOfAllObjects() const {
-    return _pimpl->CallAndWait<std::vector<std::string>>("get_names_of_all_objects");
-  }
-
   rpc::EpisodeInfo Client::GetEpisodeInfo() {
     return _pimpl->CallAndWait<rpc::EpisodeInfo>("get_episode_info");
   }
@@ -188,53 +170,8 @@ namespace detail {
     return _pimpl->CallAndWait<rpc::MapInfo>("get_map_info");
   }
 
-  std::string Client::GetMapData() const{
-    return _pimpl->CallAndWait<std::string>("get_map_data");
-  }
-
   std::vector<uint8_t> Client::GetNavigationMesh() const {
     return _pimpl->CallAndWait<std::vector<uint8_t>>("get_navigation_mesh");
-  }
-
-  bool Client::SetFilesBaseFolder(const std::string &path) {
-    return FileTransfer::SetFilesBaseFolder(path);
-  }
-
-  std::vector<std::string> Client::GetRequiredFiles(const std::string &folder, const bool download) const {
-    // Get the list of required files
-    auto requiredFiles = _pimpl->CallAndWait<std::vector<std::string>>("get_required_files", folder);
-
-    if (download) {
-
-      // For each required file, check if it exists and request it otherwise
-      for (auto requiredFile : requiredFiles) {
-        if (!FileTransfer::FileExists(requiredFile)) {
-          RequestFile(requiredFile);
-          log_info("Could not find the required file in cache, downloading... ", requiredFile);
-        } else {
-          log_info("Found the required file in cache! ", requiredFile);
-        }
-      }
-    }
-    return requiredFiles;
-  }
-
-  void Client::RequestFile(const std::string &name) const {
-    // Download the binary content of the file from the server and write it on the client
-    auto content = _pimpl->CallAndWait<std::vector<uint8_t>>("request_file", name);
-    FileTransfer::WriteFile(name, content);
-  }
-
-  std::vector<uint8_t> Client::GetCacheFile(const std::string &name, const bool request_otherwise) const {
-    // Get the file from the cache in the file transfer
-    std::vector<uint8_t> file = FileTransfer::ReadFile(name);
-
-    // If it isn't in the cache, download it if request otherwise is true
-    if (file.empty() && request_otherwise) {
-      RequestFile(name);
-      file = FileTransfer::ReadFile(name);
-    }
-    return file;
   }
 
   std::vector<std::string> Client::GetAvailableMaps() {
@@ -293,31 +230,6 @@ namespace detail {
     return _pimpl->AsyncCall("set_vehicle_light_state", vehicle, light_state);
   }
 
-  void Client::OpenVehicleDoor(
-      rpc::ActorId vehicle,
-      const rpc::VehicleDoor door_idx) {
-    return _pimpl->AsyncCall("open_vehicle_door", vehicle, door_idx);
-  }
-
-  void Client::CloseVehicleDoor(
-      rpc::ActorId vehicle,
-      const rpc::VehicleDoor door_idx) {
-    return _pimpl->AsyncCall("close_vehicle_door", vehicle, door_idx);
-  }
-
-  void Client::SetWheelSteerDirection(
-        rpc::ActorId vehicle,
-        rpc::VehicleWheelLocation vehicle_wheel,
-        float angle_in_deg) {
-    return _pimpl->AsyncCall("set_wheel_steer_direction", vehicle, vehicle_wheel, angle_in_deg);
-  }
-
-  float Client::GetWheelSteerAngle(
-        rpc::ActorId vehicle,
-        rpc::VehicleWheelLocation wheel_location){
-    return _pimpl->CallAndWait<float>("get_wheel_steer_angle", vehicle, wheel_location);
-  }
-
   rpc::Actor Client::SpawnActor(
       const rpc::ActorDescription &description,
       const geom::Transform &transform) {
@@ -349,7 +261,7 @@ namespace detail {
 
   bool Client::DestroyActor(rpc::ActorId actor) {
     try {
-      return _pimpl->CallAndWait<bool>("destroy_actor", actor);
+      return _pimpl->CallAndWait<void>("destroy_actor", actor);
     } catch (const std::exception &e) {
       log_error("failed to destroy actor", actor, ':', e.what());
       return false;
@@ -416,10 +328,6 @@ namespace detail {
     _pimpl->AsyncCall("set_actor_autopilot", vehicle, enabled);
   }
 
-  void Client::ShowVehicleDebugTelemetry(rpc::ActorId vehicle, const bool enabled) {
-    _pimpl->AsyncCall("show_vehicle_debug_telemetry", vehicle, enabled);
-  }
-
   void Client::ApplyControlToVehicle(rpc::ActorId vehicle, const rpc::VehicleControl &control) {
     _pimpl->AsyncCall("apply_control_to_vehicle", vehicle, control);
   }
@@ -432,43 +340,12 @@ namespace detail {
     _pimpl->AsyncCall("use_carsim_road", vehicle, enabled);
   }
 
-  void Client::EnableChronoPhysics(
-      rpc::ActorId vehicle,
-      uint64_t MaxSubsteps,
-      float MaxSubstepDeltaTime,
-      std::string VehicleJSON,
-      std::string PowertrainJSON,
-      std::string TireJSON,
-      std::string BaseJSONPath) {
-    _pimpl->AsyncCall("enable_chrono_physics",
-        vehicle,
-        MaxSubsteps,
-        MaxSubstepDeltaTime,
-        VehicleJSON,
-        PowertrainJSON,
-        TireJSON,
-        BaseJSONPath);
-  }
-
   void Client::ApplyControlToWalker(rpc::ActorId walker, const rpc::WalkerControl &control) {
     _pimpl->AsyncCall("apply_control_to_walker", walker, control);
   }
 
-  rpc::WalkerBoneControlOut Client::GetBonesTransform(rpc::ActorId walker) {
-    auto res = _pimpl->CallAndWait<rpc::WalkerBoneControlOut>("get_bones_transform", walker);
-    return res;
-  }
-
-  void Client::SetBonesTransform(rpc::ActorId walker, const rpc::WalkerBoneControlIn &bones) {
-    _pimpl->AsyncCall("set_bones_transform", walker, bones);
-  }
-
-  void Client::BlendPose(rpc::ActorId walker, float blend) {
-    _pimpl->AsyncCall("blend_pose", walker, blend);
-  }
-
-  void Client::GetPoseFromAnimation(rpc::ActorId walker) {
-    _pimpl->AsyncCall("get_pose_from_animation", walker);
+  void Client::ApplyBoneControlToWalker(rpc::ActorId walker, const rpc::WalkerBoneControl &control) {
+    _pimpl->AsyncCall("apply_bone_control_to_walker", walker, control);
   }
 
   void Client::SetTrafficLightState(
@@ -505,11 +382,6 @@ namespace detail {
     _pimpl->AsyncCall("freeze_all_traffic_lights", frozen);
   }
 
-  std::vector<geom::BoundingBox> Client::GetLightBoxes(rpc::ActorId traffic_light) const {
-    using return_t = std::vector<geom::BoundingBox>;
-    return _pimpl->CallAndWait<return_t>("get_light_boxes", traffic_light);
-  }
-
   rpc::VehicleLightStateList Client::GetVehiclesLightStates() {
     return _pimpl->CallAndWait<std::vector<std::pair<carla::ActorId, uint32_t>>>("get_vehicle_light_states");
   }
@@ -539,10 +411,8 @@ namespace detail {
     return _pimpl->CallAndWait<std::string>("show_recorder_actors_blocked", name, min_time, min_distance);
   }
 
-  std::string Client::ReplayFile(std::string name, double start, double duration,
-      uint32_t follow_id, bool replay_sensors) {
-    return _pimpl->CallAndWait<std::string>("replay_file", name, start, duration,
-        follow_id, replay_sensors);
+  std::string Client::ReplayFile(std::string name, double start, double duration, uint32_t follow_id) {
+    return _pimpl->CallAndWait<std::string>("replay_file", name, start, duration, follow_id);
   }
 
   void Client::StopReplayer(bool keep_actors) {

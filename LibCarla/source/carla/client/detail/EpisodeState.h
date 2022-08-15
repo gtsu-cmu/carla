@@ -11,7 +11,6 @@
 #include "carla/NonCopyable.h"
 #include "carla/client/ActorSnapshot.h"
 #include "carla/client/Timestamp.h"
-#include "carla/geom/Vector3DInt.h"
 #include "carla/sensor/data/RawEpisodeState.h"
 
 #include <boost/optional.hpp>
@@ -107,8 +106,6 @@ namespace detail {
     const uint64_t _episode_id;
 
     const Timestamp _timestamp;
-
-    geom::Vector3DInt _map_origin;
 
     SimulationState _simulation_state;
 

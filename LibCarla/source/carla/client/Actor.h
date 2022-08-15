@@ -102,18 +102,11 @@ namespace client {
     /// Enable or disable gravity on this actor.
     void SetEnableGravity(bool enabled = true);
 
-    rpc::ActorState GetActorState() const;
-
+    /// @warning This method only checks whether this instance of Actor has
+    /// called the Destroy() method, it does not check whether the actor is
+    /// actually alive in the simulator.
     bool IsAlive() const {
-      return GetEpisode().IsValid() && (GetActorState() != rpc::ActorState::PendingKill && GetActorState() != rpc::ActorState::Invalid) ;
-    }
-
-    bool IsDormant() const {
-      return GetEpisode().IsValid() && GetActorState() == rpc::ActorState::Dormant;
-    }
-
-    bool IsActive() const {
-      return GetEpisode().IsValid() && GetActorState() == rpc::ActorState::Active;
+      return _is_alive && GetEpisode().IsValid();
     }
 
     /// Tell the simulator to destroy this Actor, and return whether the actor
@@ -129,6 +122,9 @@ namespace client {
       return Super::GetActorDescription();
     }
 
+  private:
+
+    bool _is_alive = true;
   };
 
 } // namespace client

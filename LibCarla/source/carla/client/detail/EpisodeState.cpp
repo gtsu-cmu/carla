@@ -17,7 +17,6 @@ namespace detail {
           state.GetGameTimeStamp(),
           state.GetDeltaSeconds(),
           state.GetPlatformTimeStamp()),
-      _map_origin(state.GetMapOrigin()),
       _simulation_state(state.GetSimulationState()) {
     _actors.reserve(state.size());
     for (auto &&actor : state) {
@@ -26,7 +25,6 @@ namespace detail {
           actor.id,
           ActorSnapshot{
               actor.id,
-              actor.actor_state,
               actor.transform,
               actor.velocity,
               actor.angular_velocity,

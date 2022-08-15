@@ -23,6 +23,10 @@ namespace client {
     }
   }
 
+  ActorBlueprint::ActorBlueprint(){
+    
+  }
+
   ActorBlueprint::ActorBlueprint(rpc::ActorDefinition definition)
     : _uid(definition.uid),
       _id(std::move(definition.id)) {
