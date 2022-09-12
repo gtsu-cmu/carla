@@ -46,6 +46,9 @@ crp::CityObjectLabel ATagger::GetLabelByFolderName(const FString &String) {
   else if (String == "Dynamic")      return crp::CityObjectLabel::Dynamic;
   else if (String == "Water")        return crp::CityObjectLabel::Water;
   else if (String == "Terrain")      return crp::CityObjectLabel::Terrain;
+  else if (String == "workzone_objects")      return crp::CityObjectLabel::workzone_objects;
+  else if (String == "ConstructionVehicle")      return crp::CityObjectLabel::ConstructionVehicle;
+  else if (String == "Detour")      return crp::CityObjectLabel::Detour;
   else                               return crp::CityObjectLabel::None;
 }
 
@@ -251,6 +254,8 @@ FString ATagger::GetTagAsString(const crp::CityObjectLabel Label)
     CARLA_GET_LABEL_STR(Dynamic)
     CARLA_GET_LABEL_STR(Water)
     CARLA_GET_LABEL_STR(Terrain)
+    CARLA_GET_LABEL_STR(workzone_objects)
+    CARLA_GET_LABEL_STR(ConstructionVehicle)
 #undef CARLA_GET_LABEL_STR
   }
 }

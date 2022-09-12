@@ -37,6 +37,9 @@ namespace rpc {
     Dynamic      =  20u,
     Water        =  21u,
     Terrain      =  22u,
+    workzone_objects = 23u,
+    ConstructionVehicle = 24u,
+    Detour       =  25u,
     Any          =  0xFF
   };
 

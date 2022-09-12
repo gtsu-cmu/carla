@@ -236,31 +236,31 @@ int carla_client_cpp::game_loop_cpp_initialize(int argc, const char *argv[]) {
       //Input values from Python converter here
       //transform.location.x=-637.002;
       //transform.location.y=-596.163;
+      //transform.location.x=-953.89041743; // x and y coordinates swapped wrt cadre
+      //transform.location.y=437.11887004;
       transform.location.x=-953.89041743; // x and y coordinates swapped wrt cadre
       transform.location.y=437.11887004;
-      //transform.location.y=-953.89041743; // x and y coordinates swapped wrt cadre
-      //transform.location.x=437.11887004;
       transform.location.z=0;
       transform.rotation.pitch=0;
       transform.rotation.roll=0;
       transform.rotation.yaw=0;
 
-      float min=INT_MAX;
-      auto temp=transform;
-      float minval_x=0;
-      float minval_y=0;
-      for (auto element: spawn_points){
-          float temp_dist=abs(transform.location.x-element.location.x)+abs(transform.location.y-element.location.y);
-          if(temp_dist<=min){
-            min=temp_dist;
-            minval_x=element.location.x;
-            minval_y=element.location.y;
-            temp=element;  
-          }
-      }
-      std::cout<<"MIN DISTANCE=  "<<min<<'\n';
-      transform=temp;
-      std::cout<<"Closest spawn point=  "<<minval_x<<minval_y<<'\n';
+//      float min=INT_MAX;
+//      auto temp=transform;
+//      float minval_x=0;
+//      float minval_y=0;
+//      for (auto element: spawn_points){
+//          float temp_dist=abs(transform.location.x-element.location.x)+abs(transform.location.y-element.location.y);
+//          if(temp_dist<=min){
+//            min=temp_dist;
+//            minval_x=element.location.x;
+//            minval_y=element.location.y;
+//            temp=element;  
+//          }
+//      }
+//      std::cout<<"MIN DISTANCE=  "<<min<<'\n';
+//      transform=temp;
+//      std::cout<<"Closest spawn point=  "<<minval_x<<minval_y<<'\n';
 
       // transform.location.x=92.1099 ;
       // transform.location.y=170.544 ;
