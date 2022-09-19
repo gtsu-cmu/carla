@@ -173,8 +173,10 @@ int carla_client_cpp::game_loop_cpp_initialize(int argc, const char *argv[]) {
       // std::string str(town_name_xodr);
       // std::cout<<"xodr file path: "<<town_name_xodr<<'\n';
 
-      std::string town_name_xodr ("/home/gregory/workspace/scenarios/kansas.xodr");
-      //std::string town_name_xodr ("/home/gregory/workspace/carla/PythonAPI/util/maps/kansas.xodr");
+      //std::string town_name_xodr ("/home/gregory/workspace/scenarios/kansas.xodr");
+      
+      std::string town_name_xodr ("/home/gregory/workspace/carla/PythonAPI/util/maps/kansas.xodr"); //---
+      
       // strcpy(town_name_xodr,env_p);
       // std::string town_name_xodr ("/home/shounak/shounak/carla/PythonAPI/util/maps/kansas.xodr");
       //std::string town_name_xodr ("kansas.xodr");
@@ -189,8 +191,8 @@ int carla_client_cpp::game_loop_cpp_initialize(int argc, const char *argv[]) {
     bool enable_mesh_visibility = true;
     bool enable_pedestrian_navigation = true;
       */
-      std::cout<<"Town name xodr="<<town_name_xodr;
-      world=client1.GenerateOpenDriveWorld(town_name_xodr,params);
+      std::cout<<"Town name xodr="<<town_name_xodr; //---
+      world=client1.GenerateOpenDriveWorld(town_name_xodr,params); //---
       //std::cout << typeid(world).name() << std::endl;
 
       // Get a random vehicle blueprint.
@@ -236,11 +238,13 @@ int carla_client_cpp::game_loop_cpp_initialize(int argc, const char *argv[]) {
       //Input values from Python converter here
       //transform.location.x=-637.002;
       //transform.location.y=-596.163;
-      transform.location.x=-953.89041743; // x and y coordinates swapped wrt cadre
-      transform.location.y=437.11887004;
-      //transform.location.y=-953.89041743; // x and y coordinates swapped wrt cadre
-      //transform.location.x=437.11887004;
-      transform.location.z=0;
+      //transform.location.x=-953.89041743; // x and y coordinates swapped wrt cadre
+      //transform.location.y=437.11887004;
+      transform.location.x=-1034.528; // x and y coordinates swapped wrt cadre
+      transform.location.y=-414.616; // Modified from computation by *-1
+      //transform.location.x=-915.65; // x and y coordinates swapped wrt cadre
+      //transform.location.y=-461.33;           // Send Professor Raj an email about my understanding of the coordinate systems and transforms (location and rotation)
+      transform.location.z=0;                   // Record video of vehicle on PennDOT scenario (spawn points) if possible, or Kansas testbed if necessary
       transform.rotation.pitch=0;
       transform.rotation.roll=0;
       transform.rotation.yaw=0;
@@ -261,13 +265,8 @@ int carla_client_cpp::game_loop_cpp_initialize(int argc, const char *argv[]) {
       std::cout<<"MIN DISTANCE=  "<<min<<'\n';
       transform=temp;
       std::cout<<"Closest spawn point=  "<<minval_x<<minval_y<<'\n';
-
-      // transform.location.x=92.1099 ;
-      // transform.location.y=170.544 ;
-      // transform.location.z=0.3;
-      // transform.rotation.pitch=0;
-      // transform.rotation.roll=0;
-      // transform.rotation.yaw=-90.003;
+      
+      //transform = RandomChoice(spawn_points, rng);
 
       // std::cout<<"x,y,z coordinates are:"<<transform.location.x<<" "<<transform.location.y<<" "<<transform.location.z<<" "<<'\n';
       // std::cout<<"Rotation variables are:"<<transform.rotation.pitch<<" "<<transform.rotation.roll<<" "<<transform.rotation.yaw<<" "<<'\n';
@@ -371,7 +370,7 @@ int carla_client_cpp::game_loop_cpp_executive(DriveCommand command, VehicleState
       control_exec.throttle = 0.0f;
       float strcmd= atan( command.desiredCurvature_k *WHEELBASE)/1.5708; //Normalized by pi/2, more exact should be 1.2645 from max desiredcurvature
       //Need to find range of desiredCurvature so that normalized steer value can be calculated
-      std::cout<<"STRCMD="<<strcmd;
+      std::cout<<"STRCMD="<<strcmd<<std::endl;
       if(strcmd>1){
         control_exec.steer=1;
       }
@@ -382,7 +381,7 @@ int carla_client_cpp::game_loop_cpp_executive(DriveCommand command, VehicleState
         control_exec.steer=strcmd;
       }
   
-      vehicle->ApplyControl(control_exec);
+      /*vehicle->ApplyControl(control_exec);
       //carla::geom::Vector3D velocity = {1.0f, 0.0f, 0.0f};
       carla::geom::Vector3D velocity = {command.desiredSpeed_mps, 0.0f, 0.0f};
       vehicle->SetVelocity_SS(velocity);
@@ -415,7 +414,7 @@ int carla_client_cpp::game_loop_cpp_executive(DriveCommand command, VehicleState
 
       vehicleState->curvature_k = command.desiredCurvature_k;//tan((cars[0]->getCarDynamics()->getWheelSteerAngle(WheelPosition::FRONT_LEFT))/57.2958)/2.8194;    ///< Curvature of the vehicle - as estimated by the pose system
       vehicleState->speed_mps = command.desiredSpeed_mps;//cars[0]->getSpeed(); //math_tools::Length(velocity);
-      
+      */
 
 
       // vehicle-> set wheel angle to 
@@ -429,6 +428,15 @@ int carla_client_cpp::game_loop_cpp_executive(DriveCommand command, VehicleState
       */
             //vehicle ++;
       //printf("vehnum=%d",vehicle);
+      std::cout << vehicleState->pose.rot1 << std::endl;
+      
+      carla::geom::Rotation temp;
+      temp.pitch = vehicleState->pose.rot2 * 180.0/PI;
+      temp.yaw = 1.0*(vehicleState->pose.rot1) - PI/2; //radians -- Carla takes degrees
+      temp.yaw *= 180.0/PI;
+      temp.roll = vehicleState->pose.rot3 * 180.0/PI;
+      vehicle->SetTransform(carla::geom::Transform(carla::geom::Location(vehicleState->pose.y - 364966.97, -1*(vehicleState->pose.x - 4341477.29), -1*(vehicleState->pose.z)), temp));
+      std::cout << vehicle->GetTransform().rotation.yaw << std::endl;
       std::cout<<"end carla exec"<<'\n';
   return 0;
 }
