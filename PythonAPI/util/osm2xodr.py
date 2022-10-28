@@ -27,12 +27,12 @@ settings = carla.Osm2OdrSettings()
 # # Convert to .xodr
 
 settings.generate_traffic_lights=True
-#settings.use_offsets=True
-settings.use_offsets=False
-#settings.center_map=True
-settings.center_map=False
-settings.offset_x=0
-settings.offset_y=0
+settings.use_offsets=True
+#settings.use_offsets=False
+settings.center_map=True
+#settings.center_map=False
+settings.offset_x=-364966.97
+settings.offset_y=-4341477.29
 #settings2=copy.deepcopy(settings)
 settings.proj_string=str("+proj=utm +zone=15 -r -s")
 
