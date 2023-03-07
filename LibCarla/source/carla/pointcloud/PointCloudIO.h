@@ -21,7 +21,9 @@ namespace pointcloud {
     template <typename PointIt>
     static void Dump(std::ostream &out, PointIt begin, PointIt end) {
       WriteHeader(out, begin, end);
+      //std::cout<<"HI";
       for (; begin != end; ++begin) {
+	//std::cout<<"HERE";
         begin->WriteDetection(out);
         out << '\n';
       }
@@ -29,6 +31,7 @@ namespace pointcloud {
 
     template <typename PointIt>
     static std::string SaveToDisk(std::string path, PointIt begin, PointIt end) {
+      //std::cout<<"In SaveToDisk fn"<<'\n';	
       FileSystem::ValidateFilePath(path, ".ply");
       std::ofstream out(path);
       Dump(out, begin, end);
@@ -37,7 +40,7 @@ namespace pointcloud {
 
   private:
     template <typename PointIt> static void WriteHeader(std::ostream &out, PointIt begin, PointIt end) {
-      DEBUG_ASSERT(std::distance(begin, end) >= 0);
+      //DEBUG_ASSERT(std::distance(begin, end) >= 0);
       out << "ply\n"
            "format ascii 1.0\n"
            "element vertex " << std::to_string(static_cast<size_t>(std::distance(begin, end))) << "\n";

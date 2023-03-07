@@ -47,7 +47,7 @@ compile_main: #Added by Shounak
 compile_main_driver: #Added by Shounak
 	$(call log,Compiling C++ Client Helper...)
 	@mkdir -p $(BINDIR)
-	@$(CXX) $(CXXFLAGS) -I/home/shounak/shounak/carla/Examples/CppClient/libcarla-install/include/carla/client/detail/ -I/home/shounak/shounak/cadre/tartanracing/src -I/home/shounak/shounak/cadre/tartanracing/src/common \
+	@$(CXX) $(CXXFLAGS) -I/home/naren/naren_research/carla/Examples/CppClient/libcarla-install/include/carla/client/detail/ -I/home/naren/naren_research/cadre/tartanracing/src -I/home/naren/naren_research/cadre/tartanracing/src/common \
 	 -I$(INSTALLDIR)/include -isystem $(INSTALLDIR)/include/system -L$(INSTALLDIR)/lib \
 		 -o $(BINDIR)/cpp_client main_driver.cpp main.cpp\
 		-Wl,-Bstatic -lcarla_client -lrpc -lboost_filesystem -Wl,-Bdynamic \

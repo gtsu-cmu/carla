@@ -32,13 +32,14 @@ namespace data {
     }) {}
 
   private:
-
-    auto GetHeader() const {
+  auto GetHeader() const {
       return Serializer::DeserializeHeader(Super::GetRawData());
     }
 
-  public:
+    
 
+  public:
+	
     /// Horizontal angle of the Lidar at the time of the measurement.
     auto GetHorizontalAngle() const {
       return GetHeader().GetHorizontalAngle();

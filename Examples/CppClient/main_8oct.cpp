@@ -11,7 +11,7 @@
 #include <carla/client/ActorBlueprint.h>
 #include <carla/client/BlueprintLibrary.h>
 #include <carla/client/Client.h>
-//#include "/home/shounak/shounak/carla/LibCarla/source/carla/client/Client.h"
+//#include "/home/naren/naren_research/carla/LibCarla/source/carla/client/Client.h"
 #include <carla/client/Map.h>
 #include <carla/client/Sensor.h>
 #include <carla/client/TimeoutException.h>

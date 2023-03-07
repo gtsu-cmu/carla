@@ -91,7 +91,7 @@ static void SaveSemSegImageToDisk(const csd::Image &image) {
   std::snprintf(buffer, sizeof(buffer), "%08zu", image.GetFrame());
   std::cout<<"Saving image to disk"<<'\n';
   auto filename = "_images/"s + buffer + ".png";
-  //auto filename = "/home/shounak/shounak/carla/Examples/CppClient/_images/"s + buffer + ".png";
+  //auto filename = "/home/naren/naren_research/carla/Examples/CppClient/_images/"s + buffer + ".png";
   // auto view = ImageView::MakeColorConvertedView(
   //     ImageView::MakeView(image),
   //     ColorConverter::CityScapesPalette());
@@ -176,7 +176,7 @@ int carla_client_cpp::game_loop_cpp_initialize(int argc, const char *argv[]) {
       std::string town_name_xodr ("/home/gregory/workspace/scenarios/kansas.xodr");
       //std::string town_name_xodr ("/home/gregory/workspace/carla/PythonAPI/util/maps/kansas.xodr");
       // strcpy(town_name_xodr,env_p);
-      // std::string town_name_xodr ("/home/shounak/shounak/carla/PythonAPI/util/maps/kansas.xodr");
+      // std::string town_name_xodr ("/home/naren/naren_research/carla/PythonAPI/util/maps/kansas.xodr");
       //std::string town_name_xodr ("kansas.xodr");
       const carla::rpc::OpendriveGenerationParameters params = {2.0,50.0,0.2,0.6,true,true,true};
 
